@@ -9,8 +9,27 @@ console.log("In app.ts");
 function validate(validatableInput) {
     let isValid = true;
     if (validatableInput.required) {
-        isValid = isValid && validatableInput;
+        isValid = isValid && validatableInput.value.toString().trim().length !== 0;
     }
+    if (validatableInput.minLength != null &&
+        typeof validatableInput.value === "string") {
+        isValid =
+            isValid && validatableInput.value.length >= validatableInput.minLength;
+    }
+    if (validatableInput.maxLength != null &&
+        typeof validatableInput.value === "string") {
+        isValid =
+            isValid && validatableInput.value.length <= validatableInput.maxLength;
+    }
+    if (validatableInput.min != null &&
+        typeof validatableInput.value === "number") {
+        isValid = isValid && validatableInput.value >= validatableInput.min;
+    }
+    if (validatableInput.max != null &&
+        typeof validatableInput.value === "number") {
+        isValid = isValid && validatableInput.value <= validatableInput.max;
+    }
+    return isValid;
 }
 //autobind decorator
 function autobind(_, _2, descriptor) {
@@ -24,6 +43,7 @@ function autobind(_, _2, descriptor) {
     };
     return adjDescriptor;
 }
+// ProjectList Class
 //ProjectInput Class
 class ProjectInput {
     constructor() {
@@ -38,26 +58,33 @@ class ProjectInput {
         this.configure();
         this.attach();
     }
-    isUserInputValid(a, b, c) {
-        if (a.trim().length === 0 ||
-            b.trim().length === 0 ||
-            c.trim().length === 0) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
     gatherUserInput() {
         const enteredTitle = this.titleInputElement.value;
         const enteredDescription = this.descriptionInputElement.value;
         const enteredPeople = this.peopleInputElement.value;
-        if (this.isUserInputValid(enteredTitle, enteredDescription, enteredPeople)) {
-            return [enteredTitle, enteredDescription, +enteredPeople];
-        }
-        else {
+        const titleValidatable = {
+            value: enteredTitle,
+            required: true
+        };
+        const descriptionValidatable = {
+            value: enteredDescription,
+            required: true,
+            minLength: 5
+        };
+        const peopleValidatable = {
+            value: +enteredPeople,
+            required: true,
+            min: 1,
+            max: 5
+        };
+        if (!validate(titleValidatable) ||
+            !validate(descriptionValidatable) ||
+            !validate(peopleValidatable)) {
             alert('Invalid Input');
             return;
+        }
+        else {
+            return [enteredTitle, enteredDescription, +enteredPeople];
         }
     }
     clearInputs() {
