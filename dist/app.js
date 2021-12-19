@@ -106,7 +106,10 @@ class Component {
         this.hostElement = document.getElementById(hostElementId);
         const importedNode = document.importNode(this.templateElement.content, true);
         this.element = importedNode.firstElementChild;
-        if (newElementId) {
+        if (newElementId === 'user-input') {
+            this.element.id = `${newElementId}`;
+        }
+        else if (newElementId) {
             this.element.id = `${newElementId}-projects`;
         }
         this.attach(insertAtStart);
@@ -155,7 +158,7 @@ __decorate([
 // ProjectList Class
 class ProjectList extends Component {
     constructor(type) {
-        super('project-list', 'app', false, `${type}-projects`);
+        super('project-list', 'app', false, `${type}`);
         this.type = type;
         this.assignedProjects = [];
         projectState.addListener((projects) => {

@@ -37,7 +37,6 @@ class State<T> {
         this.listeners.push(listenerFn)
     }
 }
-
 class ProjectState extends State<Project> {
     private projects: any[] = []
     private static instance: ProjectState
@@ -93,7 +92,6 @@ interface Validatable {
     min?: number
     max?: number
 }
-
 function validate(validatableInput: Validatable) {
     let isValid = true
     if(validatableInput.required) {
@@ -127,7 +125,6 @@ function validate(validatableInput: Validatable) {
     }
     return isValid
 }
-
 //autobind decorator
 function autobind(
     _: any, 
@@ -168,7 +165,9 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
             true
         )
         this.element = importedNode.firstElementChild as U
-        if(newElementId){
+        if(newElementId === 'user-input'){
+            this.element.id = `${newElementId}`
+        }else if(newElementId){
             this.element.id = `${newElementId}-projects`
         }
         
@@ -232,7 +231,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>
     assignedProjects: any[]
 
     constructor(private type: 'active' | 'finished') {
-        super('project-list', 'app', false,`${type}-projects`)
+        super('project-list', 'app', false,`${type}`)
         this.assignedProjects = []
         
         projectState.addListener((projects: Project[]) => {
