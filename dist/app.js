@@ -6,6 +6,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 console.log("In app.ts");
+// Poject State Management
+class ProjectState {
+    constructor() {
+        this.projects = [];
+    }
+    addProject(title, description, numOfPeople) {
+        const newProject = {
+            id: Math.random().toString(),
+            title: title,
+            description: description,
+            people: numOfPeople
+        };
+        this.projects.push(newProject);
+    }
+}
 function validate(validatableInput) {
     let isValid = true;
     if (validatableInput.required) {
@@ -44,6 +59,27 @@ function autobind(_, _2, descriptor) {
     return adjDescriptor;
 }
 // ProjectList Class
+class ProjectList {
+    constructor(type) {
+        this.type = type;
+        this.templateElement = document.getElementById('project-list');
+        this.hostElement = document.getElementById('app');
+        const importedNode = document.importNode(this.templateElement.content, true);
+        this.element = importedNode.firstElementChild;
+        this.element.id = `${this.type}-projects`;
+        this.attach();
+        this.renderContent();
+    }
+    renderContent() {
+        const listId = `${this.type}-project-list`;
+        this.element.querySelector('ul').id = listId;
+        this.element.querySelector('h2').textContent =
+            this.type.toUpperCase() + ' Projects';
+    }
+    attach() {
+        this.hostElement.insertAdjacentElement('beforeend', this.element);
+    }
+}
 //ProjectInput Class
 class ProjectInput {
     constructor() {
@@ -112,3 +148,5 @@ __decorate([
     autobind
 ], ProjectInput.prototype, "submitHandler", null);
 const prjInput = new ProjectInput;
+const activePrjList = new ProjectList('active');
+const finishedPrjList = new ProjectList('finished');
